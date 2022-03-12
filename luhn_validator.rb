@@ -13,8 +13,8 @@ module LuhnValidator
     check = nums_a
             .each_with_index
             .reduce(0) do |a, (d, i)|
-      a + get_val(d, i)
-    end
+              a + get_val(d, i)
+            end
 
     (check % 10).zero?
   end

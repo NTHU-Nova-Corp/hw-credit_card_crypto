@@ -7,7 +7,7 @@ require 'minitest/autorun'
 
 describe 'Test card info encryption' do
   before do
-    @text_with_space = "    Hello, how are you?   "
+    @text_with_space = '    Hello, how are you?   '
     @cc = CreditCard.new('4916603231464963', 'Mar-30-2020',
                          'Soumya Ray', 'Visa')
     @key = 3

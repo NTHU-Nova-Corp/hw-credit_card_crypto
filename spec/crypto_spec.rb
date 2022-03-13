@@ -7,6 +7,7 @@ require 'minitest/autorun'
 
 describe 'Test card info encryption' do
   before do
+    @text_with_space = "    Hello, how are you?   "
     @cc = CreditCard.new('4916603231464963', 'Mar-30-2020',
                          'Soumya Ray', 'Visa')
     @key = 3
@@ -24,6 +25,12 @@ describe 'Test card info encryption' do
       dec = SubstitutionCipher::Caesar.decrypt(enc, @key)
       _(dec).must_equal @cc.to_s
     end
+
+    it 'should decrypt text with spaces correctly' do
+      enc = SubstitutionCipher::Caesar.encrypt(@text_with_space, @key)
+      dec = SubstitutionCipher::Caesar.decrypt(enc, @key)
+      _(dec).must_equal @text_with_space
+    end
   end
 
   describe 'Using Permutation cipher' do
@@ -37,6 +44,12 @@ describe 'Test card info encryption' do
       enc = SubstitutionCipher::Permutation.encrypt(@cc, @key)
       dec = SubstitutionCipher::Permutation.decrypt(enc, @key)
       _(dec).must_equal @cc.to_s
+    end
+
+    it 'should decrypt text with spaces correctly' do
+      enc = SubstitutionCipher::Permutation.encrypt(@text_with_space, @key)
+      dec = SubstitutionCipher::Permutation.decrypt(enc, @key)
+      _(dec).must_equal @text_with_space.to_s
     end
   end
 
@@ -53,6 +66,12 @@ describe 'Test card info encryption' do
       enc = DoubleTranspositionCipher.encrypt(@cc, @key)
       dec = DoubleTranspositionCipher.decrypt(enc, @key)
       _(dec).must_equal @cc.to_s
+    end
+
+    it 'should decrypt text with spaces correctly' do
+      enc = DoubleTranspositionCipher.encrypt(@text_with_space, @key)
+      dec = DoubleTranspositionCipher.decrypt(enc, @key)
+      _(dec).must_equal @text_with_space
     end
   end
 end

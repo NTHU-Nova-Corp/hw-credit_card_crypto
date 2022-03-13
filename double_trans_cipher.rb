@@ -11,44 +11,50 @@ module DoubleTranspositionCipher
     # 3. sort rows in predictably random way using key as seed
     # 4. sort columns of each row in predictably random way
     # 5. return joined cyphertext
-    _rows, cols = get_dims(document)
+    document.to_s += '-'
+    _rows, cols = get_dimensions(document)
     prng = get_prng(key)
-    ptext_matrix = get_matrix(document, cols)
+    plain_text_matrix = get_matrix(document, cols)
 
     # Shuffling columns can easily be done conceptually by
     # transposing and treating them as rows
     # Makes life easier :)
     # Rows are shuffled first, then columns
 
-    ptext_matrix.shuffle(random: prng).transpose
-                .shuffle(random: prng).transpose
-                .flatten.join
+    plain_text_matrix.shuffle(random: prng).transpose
+                     .shuffle(random: prng).transpose
+                     .flatten.join
   end
 
   def self.decrypt(ciphertext, key)
-    # TODO: FILL THIS IN!
-    rows, cols = get_dims(ciphertext)
+    rows, cols = get_dimensions(ciphertext)
     prng = get_prng(key)
-    ctext_matrix = get_matrix(ciphertext, cols)
-
-    r_idx, c_idx = get_indices(rows, cols, prng)
-
-    ctext_matrix.sort_by.with_index { |_, i| r_idx[i] }.transpose
-                .sort_by.with_index { |_, i| c_idx[i] }.transpose
-                .flatten.join
+    cipher_text_matrix = get_matrix(ciphertext, cols)
+    row_index, col_index = get_indices(rows, cols, prng)
+    decrypt_matrix(cipher_text_matrix, row_index, col_index)
   end
 
-  def self.get_dims(string)
-    rows = Math.sqrt(string.length).floor
-    cols = Math.sqrt(string.length).ceil
-    rows = cols if rows * cols < string.length
+  def self.decrypt_matrix(cipher_text_matrix, row_index, col_index)
+    decrypted_text = cipher_text_matrix.sort_by.with_index { |_, i| row_index[i] }.transpose
+                                       .sort_by.with_index { |_, i| col_index[i] }.transpose
+                                       .flatten.join
+
+    index_flag = decrypted_text.rindex('-')
+    decrypted_text[0...index_flag]
+  end
+
+  def self.get_dimensions(text)
+    rows = Math.sqrt(text.length).floor
+    cols = Math.sqrt(text.length).ceil
+
+    rows = cols if rows * cols < text.length
 
     [rows, cols]
   end
 
-  def self.get_matrix(string, cols, pad = ' ')
-    string.chars.chain(Array.new(-string.length % cols, pad))
-          .each_slice(cols).to_a
+  def self.get_matrix(text, cols, pad = ' ')
+    text.chars.chain(Array.new(-text.length % cols, pad))
+        .each_slice(cols).to_a
   end
 
   def self.get_indices(rows, cols, prng)
@@ -59,6 +65,6 @@ module DoubleTranspositionCipher
   end
 
   def self.get_prng(key)
-    Random.new(key.unpack1('H*').to_i(16))
+    Random.new(key.to_s.unpack1('H*').to_i(16))
   end
 end

@@ -11,10 +11,11 @@ module DoubleTranspositionCipher
     # 3. sort rows in predictably random way using key as seed
     # 4. sort columns of each row in predictably random way
     # 5. return joined cyphertext
-    document.to_s += '-'
-    _rows, cols = get_dimensions(document)
+    plain_text = document.to_s
+    plain_text += '-'
+    _rows, cols = get_dimensions(plain_text)
     prng = get_prng(key)
-    plain_text_matrix = get_matrix(document, cols)
+    plain_text_matrix = get_matrix(plain_text, cols)
 
     # Shuffling columns can easily be done conceptually by
     # transposing and treating them as rows

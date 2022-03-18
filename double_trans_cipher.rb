@@ -12,7 +12,7 @@ module DoubleTranspositionCipher
     # 4. sort columns of each row in predictably random way
     # 5. return joined cyphertext
     plain_text = document.to_s
-    plain_text += '-'
+    # plain_text += '-'
     _rows, cols = get_dimensions(plain_text)
     prng = get_prng(key)
     plain_text_matrix = get_matrix(plain_text, cols)
@@ -35,13 +35,14 @@ module DoubleTranspositionCipher
     decrypt_matrix(cipher_text_matrix, row_index, col_index)
   end
 
-  def self.decrypt_matrix(cipher_text_matrix, row_index, col_index)
+  def self.decrypt_matrix(cipher_text_matrix, row_index, col_index, pad = "\x00")
     decrypted_text = cipher_text_matrix.sort_by.with_index { |_, i| row_index[i] }.transpose
                                        .sort_by.with_index { |_, i| col_index[i] }.transpose
                                        .flatten.join
 
-    index_flag = decrypted_text.rindex('-')
-    decrypted_text[0...index_flag]
+    # index_flag = decrypted_text.rindex('-')
+    # decrypted_text[0...index_flag]
+    decrypted_text.sub(/#{pad}+\z/, '')
   end
 
   def self.get_dimensions(text)
@@ -53,7 +54,7 @@ module DoubleTranspositionCipher
     [rows, cols]
   end
 
-  def self.get_matrix(text, cols, pad = ' ')
+  def self.get_matrix(text, cols, pad = "\x00")
     text.chars.chain(Array.new(-text.length % cols, pad))
         .each_slice(cols).to_a
   end
@@ -61,8 +62,9 @@ module DoubleTranspositionCipher
   def self.get_indices(rows, cols, prng)
     # Order matters, rows must be shuffled first
     # Related to PRNG state
-    [(0...rows).to_a.shuffle(random: prng),
-     (0...cols).to_a.shuffle(random: prng)]
+    [(0...rows), (0...cols)].map do |x|
+      x.to_a.shuffle(random: prng)
+    end
   end
 
   def self.get_prng(key)

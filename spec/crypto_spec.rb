@@ -13,7 +13,7 @@ describe 'Test card info encryption' do
     @key = 3
   end
 
-  describe 'Using Caesar cipher' do
+  describe 'Using caesar cipher' do
     it 'should encrypt card information' do
       enc = SubstitutionCipher::Caesar.encrypt(@cc, @key)
       _(enc).wont_equal @cc.to_s
@@ -33,7 +33,7 @@ describe 'Test card info encryption' do
     end
   end
 
-  describe 'Using Permutation cipher' do
+  describe 'Using permutation cipher' do
     it 'should encrypt card information' do
       enc = SubstitutionCipher::Permutation.encrypt(@cc, @key)
       _(enc).wont_equal @cc.to_s

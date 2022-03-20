@@ -15,11 +15,11 @@ ciphers.each do |type, module_name|
   describe 'Test card info encryption' do
     before do
       @cc = CreditCard.new('4916603231464963', 'Mar-30-2020',
-                         'Soumya Ray', 'Visa')
+                           'Soumya Ray',
+                           'Visa')
       @text_with_spaces = '    Hello, how are you?   '
       @text_with_hyphen = 'my message --'
-      @key = (type == 'modern symmetric') ?
-             ModernSymmetricCipher.generate_new_key : 3
+      @key = type == 'modern symmetric' ? ModernSymmetricCipher.generate_new_key : 3
     end
 
     describe "Using #{type} cipher" do

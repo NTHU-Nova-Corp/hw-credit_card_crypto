@@ -75,7 +75,7 @@ describe 'Test card info encryption' do
       _(dec).must_equal @text_with_space
     end
 
-    it 'should decrypt text with text ends with hyphen correctly' do
+    it 'should decrypt text ends with hyphen correctly' do
       text_with_hyphen = 'my message --'
       enc = DoubleTranspositionCipher.encrypt(text_with_hyphen, @key)
       dec = DoubleTranspositionCipher.decrypt(enc, @key)

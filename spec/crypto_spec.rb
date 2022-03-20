@@ -3,6 +3,7 @@
 require_relative '../credit_card'
 require_relative '../substitution_cipher'
 require_relative '../double_trans_cipher'
+require_relative '../sk_cipher'
 require 'minitest/autorun'
 
 describe 'Test card info encryption' do
@@ -79,6 +80,29 @@ describe 'Test card info encryption' do
       enc = DoubleTranspositionCipher.encrypt(text_with_hyphen, @key)
       dec = DoubleTranspositionCipher.decrypt(enc, @key)
       _(dec).must_equal text_with_hyphen
+    end
+  end
+
+  describe 'Using modern symmetric cipher' do
+    it 'should encrypt card information' do
+      key = ModernSymmetricCipher.generate_new_key
+      enc = ModernSymmetricCipher.encrypt(@cc, key)
+      _(enc).wont_equal @cc.to_s
+      _(enc).wont_be_nil
+    end
+
+    it 'should decrypt text' do
+      key = ModernSymmetricCipher.generate_new_key
+      enc = ModernSymmetricCipher.encrypt(@cc, key)
+      dec = ModernSymmetricCipher.decrypt(enc, key)
+      _(dec).must_equal @cc.to_s
+    end
+
+    it 'should decrypt text with spaces correctly' do
+      key = ModernSymmetricCipher.generate_new_key
+      enc = ModernSymmetricCipher.encrypt(@text_with_space, key)
+      dec = ModernSymmetricCipher.decrypt(enc, key)
+      _(dec).must_equal @text_with_space
     end
   end
 end

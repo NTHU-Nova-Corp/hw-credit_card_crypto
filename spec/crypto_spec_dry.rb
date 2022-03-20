@@ -3,22 +3,25 @@
 require_relative '../credit_card'
 require_relative '../substitution_cipher'
 require_relative '../double_trans_cipher'
+require_relative '../sk_cipher'
 require 'minitest/autorun'
 
 ciphers = { 'caesar' => 'SubstitutionCipher::Caesar',
             'permutation' => 'SubstitutionCipher::Permutation',
-            'double transposition' => 'DoubleTranspositionCipher' }
+            'double transposition' => 'DoubleTranspositionCipher',
+            'modern symmetric' => 'ModernSymmetricCipher' }
 
-describe 'Test card info encryption' do
-  before do
-    @cc = CreditCard.new('4916603231464963', 'Mar-30-2020',
+ciphers.each do |type, module_name|
+  describe 'Test card info encryption' do
+    before do
+      @cc = CreditCard.new('4916603231464963', 'Mar-30-2020',
                          'Soumya Ray', 'Visa')
-    @key = 3
-    @text_with_spaces = '    Hello, how are you?   '
-    @text_with_hyphen = 'my message --'
-  end
+      @text_with_spaces = '    Hello, how are you?   '
+      @text_with_hyphen = 'my message --'
+      @key = (type == 'modern symmetric') ?
+             ModernSymmetricCipher.generate_new_key : 3
+    end
 
-  ciphers.each do |type, module_name|
     describe "Using #{type} cipher" do
       it 'should encrypt card information' do
         enc = Kernel.const_get(module_name).encrypt(@cc, @key)

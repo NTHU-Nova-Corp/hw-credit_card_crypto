@@ -2,14 +2,12 @@
 
 require_relative '../credit_card'
 require 'minitest/autorun'
+require 'yaml'
 
-# Feel free to replace the contents of cards with data from your own yaml file
-card_details = YAML.load_file 'spec/test_credit_card_info.yml'
-
+card_details = YAML.load_file 'spec/test_data/test_credit_card_info.yml'
 cards = card_details['card_details'].map do |c|
   CreditCard.new(c['num'], c['exp'], c['name'], c['net'])
 end
-
 duplicated_cards = cards.dup
 
 describe 'Test hashing requirements' do
@@ -25,9 +23,8 @@ describe 'Test hashing requirements' do
     describe 'Check for unique hashes' do
       # TODO: Check that each card produces a different hash than other cards
       it 'should not produce identical hash for different cards' do
-        result = cards.map(&:hash)
-                      .detect { |d| cards.find_all { |c| c.hash == d }.length > 1 }
-        _(result).must_be_nil
+        unique_hashes = cards.map(&:hash).uniq
+        _(cards.length).must_equal unique_hashes.length
       end
     end
   end
@@ -45,9 +42,8 @@ describe 'Test hashing requirements' do
     describe 'Check for unique hashes' do
       # TODO: Check that each card produces a different hash than other cards
       it 'should not produce identical hash for different cards' do
-        result = cards.map(&:hash_secure)
-                      .detect { |d| cards.find_all { |c| c.hash_secure == d }.length > 1 }
-        _(result).must_be_nil
+        unique_hashes = cards.map(&:hash_secure).uniq
+        _(cards.length).must_equal unique_hashes.length
       end
     end
 
